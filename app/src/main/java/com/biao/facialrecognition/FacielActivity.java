@@ -261,6 +261,7 @@ public class FacielActivity extends AppCompatActivity implements Camera.PreviewC
     protected void onDestroy() {
         super.onDestroy();
         cloesCamera();
+        handler.removeCallbacks(runnable1);
         IdCardVerifyManager.getInstance().unInit();
     }
 }
