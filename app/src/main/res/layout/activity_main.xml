@@ -9,7 +9,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="start"
-        android:text="人证比对"
+        android:text="虹软人证比对"
+        android:textSize="40sp" />
+
+    <Button
+        android:id="@+id/btn_start_baidu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="start_baidu"
+        android:text="百度人证比对"
         android:textSize="40sp" />
 
 </LinearLayout>

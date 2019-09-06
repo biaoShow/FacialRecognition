@@ -66,4 +66,10 @@ public class YuvUtil {
         }
     }
 
+    public static byte[] nv21ConvertBitmap(byte[] preview) {
+        YuvImage yuv = new YuvImage(preview, ImageFormat.NV21, 640, 480, null);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        yuv.compressToJpeg(new Rect(0, 0, 640, 480), 100, baos);
+        return baos.toByteArray();
+    }
 }

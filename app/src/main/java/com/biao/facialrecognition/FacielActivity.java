@@ -12,6 +12,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.arcsoft.idcardveri.CompareResult;
@@ -68,6 +69,7 @@ public class FacielActivity extends AppCompatActivity implements Camera.PreviewC
     };
     private boolean isClose = false;//标识摄像头是否关闭
     private int num = 0;
+    private ScrollView svTip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +80,7 @@ public class FacielActivity extends AppCompatActivity implements Camera.PreviewC
         imageView = findViewById(R.id.iv_card_photo);
         succeedTip = findViewById(R.id.tv_succeed_tip);
         tvTip = findViewById(R.id.tv_tip);
+        svTip = findViewById(R.id.sv_tip);
 
         initData();
     }
@@ -241,6 +244,7 @@ public class FacielActivity extends AppCompatActivity implements Camera.PreviewC
                     succeedTip.setVisibility(View.VISIBLE);
                     SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm:ss");
                     tvTip.append("\n" + format.format(System.currentTimeMillis()) + "：第" + ++num + "次成功识别！");
+                    svTip.fullScroll(ScrollView.FOCUS_DOWN);
                     handler.postDelayed(runnable1, 5000);
                     cloesCamera();
                 }

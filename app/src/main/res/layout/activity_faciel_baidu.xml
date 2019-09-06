@@ -9,13 +9,13 @@
         android:layout_height="960dp">
 
         <ScrollView
-            android:id="@+id/sv_tip"
+            android:id="@+id/sv_tip1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right">
 
             <TextView
-                android:id="@+id/tv_tip"
+                android:id="@+id/tv_tip1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="开始："
@@ -24,12 +24,12 @@
         </ScrollView>
 
         <SurfaceView
-            android:id="@+id/sv_facial"
+            android:id="@+id/sv_facial1"
             android:layout_width="720dp"
             android:layout_height="960dp" />
 
         <TextView
-            android:id="@+id/tv_succeed_tip"
+            android:id="@+id/tv_succeed_tip1"
             android:layout_width="720dp"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
@@ -49,7 +49,7 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/iv_card_photo"
+            android:id="@+id/iv_card_photo1"
             android:layout_width="300dp"
             android:layout_height="400dp"
             android:src="@drawable/dialog_facial_close" />
