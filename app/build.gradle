@@ -37,7 +37,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation files('libs/libIdCardVeri.jar')
-
     //网络框架
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     // Retrofit库
@@ -55,4 +54,7 @@ dependencies {
     //黄牛刀butterknife引入
     implementation 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    implementation files('libs/facesdk.3.1.jar')
+    implementation files('libs/license.jar')
+    implementation files('libs/online_liantian_3-1-6-5-655_0312.jar')
 }

@@ -17,7 +17,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="start_baidu"
-        android:text="百度人证比对"
+        android:text="百度人证比对(在线)"
+        android:textSize="40sp" />
+
+    <Button
+        android:id="@+id/btn_start_baidu_activate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="start_baidu_activate"
+        android:text="激活百度离线SDK"
+        android:textSize="40sp" />
+    <Button
+        android:id="@+id/btn_start_baidu_offline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="start_baidu_offline"
+        android:text="百度人证比对(离线)"
         android:textSize="40sp" />
 
 </LinearLayout>

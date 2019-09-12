@@ -6,5 +6,6 @@ package com.biao.facialrecognition.preference;
  */
 
 public class PreferencesKey {
+    public static final String BAIDU_SDK = "BAIDU_SDK";
     public static final String BAIDU_TONKEN = "BAIDU_TONKEN";
 }

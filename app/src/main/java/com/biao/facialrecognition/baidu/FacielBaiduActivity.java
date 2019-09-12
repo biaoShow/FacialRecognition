@@ -1,17 +1,20 @@
 package com.biao.facialrecognition.baidu;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
+import android.media.FaceDetector;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -30,6 +33,7 @@ import com.biao.facialrecognition.retrofit.BaseObserver;
 import com.biao.facialrecognition.retrofit.RetrofitHelper;
 import com.biao.facialrecognition.retrofit.RetrofitMap;
 import com.biao.facialrecognition.retrofit.RxUtil;
+import com.biao.facialrecognition.utils.FaceDetectUtils;
 import com.biao.facialrecognition.utils.LogUtil;
 import com.google.gson.Gson;
 
@@ -97,16 +101,19 @@ public class FacielBaiduActivity extends AppCompatActivity implements Camera.Pre
         initData();
     }
 
-    private void initData() {
-        preferencesUtil = SharedPreferencesUtil.getIntent(this);
-        String path = Environment.getExternalStorageDirectory() + "/tmp.bmp";
-        bitmap = getBitmap(path);
-        ivCardPhoto.setImageBitmap(bitmap);
-        surfaceholder = svFacial.getHolder();
-        handler.postDelayed(runnable, 100);
+        private void initData() {
+            preferencesUtil = SharedPreferencesUtil.getIntent(this);
+            String path = Environment.getExternalStorageDirectory() + "/tmp.bmp";
+            bitmap = getBitmap(path);
+            ivCardPhoto.setImageBitmap(bitmap);
+            surfaceholder = svFacial.getHolder();
+            handler.postDelayed(runnable, 100);
 
-        getTonken();
-    }
+            getTonken();
+    //        FaceDetectUtils.init();
+    //        FaceDetector.Face[] faces = FaceDetectUtils.detectFace(bitmap);
+    //        LogUtil.i(faces.length + "");
+        }
 
     /**
      * 获取指定路径图片
@@ -152,6 +159,7 @@ public class FacielBaiduActivity extends AppCompatActivity implements Camera.Pre
                     camera.setDisplayOrientation(90);
                     camera.startPreview();
                     camera.setPreviewCallback(this);
+//                    setCameraDisplayOrientation(this, Camera.CameraInfo.CAMERA_FACING_BACK, camera);
                     isClose = false;
 //                    camera.setFaceDetectionListener(this);
                 } catch (Exception e) {
@@ -198,26 +206,31 @@ public class FacielBaiduActivity extends AppCompatActivity implements Camera.Pre
     @Override
     public void onPreviewFrame(byte[] bytes, Camera camera) {
         if (!isClose && bitmap != null && !isCompare && preferencesUtil.getString(PreferencesKey.BAIDU_TONKEN) != null) {
-            Log.i(TAG, "处理上传照片");
-            byte[] bytes1 = YuvUtil.nv21ConvertBitmap(bytes);
-//            Bitmap bitmap1 = BitmapFactory.decodeByteArray(bytes1, 0, bytes1.length);
-//            ivCardPhoto.setImageBitmap(bitmap1);
-            isCompare = true;
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] data = baos.toByteArray();
-            String imageIDCard = Base64Util.encode(data);
-            String imageFace = Base64Util.encode(bytes1);
-            List<FaceQueryBen> faceQueryBens = new ArrayList<>();
-            FaceQueryBen faceQueryBen = new FaceQueryBen(imageIDCard, "BASE64", "LIVE",
-                    "LOW", "NORMAL");
-            FaceQueryBen faceQueryBen1 = new FaceQueryBen(imageFace, "BASE64", "LIVE",
-                    "LOW", "NORMAL");
+            try {
+                isCompare = true;
+                Log.i(TAG, "处理上传照片");
+                byte[] bytes1 = YuvUtil.nv21ConvertBitmap(bytes);
+//                Bitmap bitmap1 = BitmapFactory.decodeByteArray(bytes1, 0, bytes1.length);
+//                ivCardPhoto.setImageBitmap(bitmap1);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] data = baos.toByteArray();
+                String imageIDCard = Base64Util.encode(data);
+                String imageFace = Base64Util.encode(bytes1);
+                List<FaceQueryBen> faceQueryBens = new ArrayList<>();
+                FaceQueryBen faceQueryBen = new FaceQueryBen(imageIDCard, "BASE64", "LIVE",
+                        "LOW", "NORMAL");
+                FaceQueryBen faceQueryBen1 = new FaceQueryBen(imageFace, "BASE64", "LIVE",
+                        "LOW", "NORMAL");
 
-            faceQueryBens.add(faceQueryBen);
-            faceQueryBens.add(faceQueryBen1);
+                faceQueryBens.add(faceQueryBen);
+                faceQueryBens.add(faceQueryBen1);
 
-            faceTOFace(faceQueryBens);
+                faceTOFace(faceQueryBens);
+            } catch (Exception e) {
+                LogUtil.e(e.getMessage());
+                isCompare = false;
+            }
         }
     }
 
@@ -314,6 +327,41 @@ public class FacielBaiduActivity extends AppCompatActivity implements Camera.Pre
             }
         }).start();
 
+    }
+
+    /**
+     * If you want to make the camera image show in the same orientation as the display, you can use the following code.
+     */
+    public static void setCameraDisplayOrientation(Activity activity, int cameraId, Camera camera) {
+        android.hardware.Camera.CameraInfo info =
+                new android.hardware.Camera.CameraInfo();
+        android.hardware.Camera.getCameraInfo(cameraId, info);
+        int rotation = activity.getWindowManager().getDefaultDisplay()
+                .getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+        }
+
+        int result;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360;  // compensate the mirror
+        } else {  // back-facing
+            result = (info.orientation - degrees + 360) % 360;
+        }
+        camera.setDisplayOrientation(result);
     }
 
     @Override
